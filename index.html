@@ -1,490 +1,260 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rose, nightingale, dawn and sunset — Directed by KinsleyKong</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
+    <title>kinsleykong - Home</title>
+    <!-- 引入 Google Fonts 提升排版质感 -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <!-- 引入 FontAwesome 图标库用于音乐播放器图标 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
-        /* Custom Font Assignments */
-        .font-cinzel { font-family: 'Cinzel', serif; }
-        .font-playfair { font-family: 'Playfair Display', serif; }
-        .font-mono-code { font-family: 'Space Mono', monospace; }
-        .font-syne { font-family: 'Syne', sans-serif; }
-
-        /* Film Noise & FX Layering */
-        .grain-overlay {
-            position: absolute;
-            top: -100%;
-            left: -100%;
-            width: 300%;
-            height: 300%;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
-            animation: grainAnim 0.3s steps(6) infinite;
-            pointer-events: none;
-            z-index: 40;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        @keyframes grainAnim {
-            0% { transform: translate(0, 0); }
-            20% { transform: translate(-5%, 5%); }
-            40% { transform: translate(-15%, -5%); }
-            60% { transform: translate(5%, -12%); }
-            80% { transform: translate(-8%, 8%); }
-            100% { transform: translate(12%, 4%); }
+        body {
+            background-color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            color: #222222;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        /* Jumpy Scratches / Godard Lines Effect */
-        .scratch-line {
+        /* --- 开场动画层 --- */
+        #intro-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .video-wrapper {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+        }
+
+        /* 放大并裁剪视频，完美去掉右侧点赞按钮，同时保持画面和谐 */
+        .video-wrapper video {
             position: absolute;
             top: 0;
-            width: 1px;
+            left: -15%; /* 向左微调裁剪右侧多余的点赞按钮区域 */
+            width: 130%; /* 放大视频宽度以掩盖裁切痕迹 */
             height: 100%;
-            background: rgba(255, 255, 255, 0.45);
-            pointer-events: none;
-            z-index: 42;
-            opacity: 0;
+            object-fit: cover;
         }
 
-        .scratch-black {
-            background: rgba(0, 0, 0, 0.7);
-            width: 2px;
-        }
-
-        @keyframes lineJitter {
-            0% { left: 12%; opacity: 0; }
-            5% { left: 12%; opacity: 0.8; }
-            10% { left: 13%; opacity: 0.3; }
-            15% { left: 12.5%; opacity: 0; }
-            40% { left: 74%; opacity: 0; }
-            43% { left: 74%; opacity: 0.9; }
-            46% { left: 74.5%; opacity: 0; }
-            70% { left: 45%; opacity: 0; }
-            72% { left: 45.2%; opacity: 0.7; }
-            75% { left: 45%; opacity: 0; }
-            100% { left: 90%; opacity: 0; }
-        }
-
-        .line-active {
-            animation: lineJitter 1.8s infinite linear;
-        }
-
-        /* Film Flicker */
-        @keyframes filmFlicker {
-            0% { opacity: 0.96; }
-            25% { opacity: 1; }
-            50% { opacity: 0.92; }
-            75% { opacity: 0.98; }
-            100% { opacity: 0.94; }
-        }
-
-        .film-flicker {
-            animation: filmFlicker 0.12s infinite;
-        }
-
-        /* Godard Dust Spots */
-        .dust-spot {
+        /* 引导点击提示（防止浏览器自动播放音频策略拦截，点击任意处可激活声音并播放视频） */
+        #click-to-start {
             position: absolute;
-            background: rgba(255, 255, 255, 0.7);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 41;
-            opacity: 0;
+            bottom: 30px;
+            font-size: 14px;
+            color: #777777;
+            letter-spacing: 1px;
+            animation: pulse 1.5s infinite;
+            cursor: pointer;
+            z-index: 101;
         }
 
-        /* Dynamic Film Gate Aspect Ratio Transitions */
-        .aspect-frame {
-            transition: all 1.2s cubic-bezier(0.77, 0, 0.175, 1);
-            position: relative;
-            box-shadow: 0 0 50px rgba(0,0,0,0.9);
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+
+        /* --- 主界面层 --- */
+        #main-container {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1.2s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        #main-container.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .profile-content h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            color: #111;
+        }
+
+        .profile-content p {
+            font-size: 1rem;
+            color: #666;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+        }
+
+        /* 优雅的音乐播放器设计 */
+        .music-player {
+            background: #fafafa;
+            border: 1px solid #eaeaea;
+            padding: 20px 30px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            width: 320px;
+        }
+
+        .play-btn {
+            background: #111;
+            color: #fff;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .track-info {
+            text-align: left;
+            flex-grow: 1;
             overflow: hidden;
         }
 
-        .ratio-1-1 { width: 85vh; height: 85vh; max-width: 90vw; max-height: 90vw; }
-        .ratio-4-3 { width: 100vh; height: 75vh; max-width: 92vw; }
-        .ratio-16-9 { width: 92vw; height: 51.75vw; max-height: 80vh; }
-        .ratio-239 { width: 96vw; height: 40.1vw; max-height: 75vh; }
-
-        /* Countdown Wheel Rotation */
-        @keyframes sweepRotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+        .track-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #222;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .sweep-line {
-            transform-origin: center center;
-            animation: sweepRotate 1s linear infinite;
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 4px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #09090b;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #27272a;
-            border-radius: 2px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #dc2626;
-        }
-
-        /* Retro Glow */
-        .gold-glow {
-            text-shadow: 0 0 15px rgba(234, 179, 8, 0.4), 0 0 30px rgba(234, 179, 8, 0.2);
-        }
-        .crimson-glow {
-            text-shadow: 0 0 15px rgba(220, 38, 38, 0.5);
-        }
-
-        /* Sprocket holes styling */
-        .sprocket-strip {
-            background-image: repeating-linear-gradient(
-                to bottom,
-                transparent,
-                transparent 15px,
-                #000 15px,
-                #000 25px
-            );
+        .track-artist {
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 2px;
         }
     </style>
 </head>
-<body class="bg-zinc-950 text-zinc-100 min-h-screen font-syne overflow-x-hidden selection:bg-red-900 selection:text-white">
+<body>
 
-    <!-- Film FX Canvas Overlay (Scratches, dust, noise lines) -->
-    <div class="fixed inset-0 pointer-events-none z-50 overflow-hidden">
-        <div class="grain-overlay"></div>
-        <div class="scratch-line line-active" style="animation-delay: 0.1s;"></div>
-        <div class="scratch-line scratch-black line-active" style="animation-delay: 0.7s;"></div>
-        <div class="scratch-line line-active" style="animation-delay: 1.3s;"></div>
-        <!-- Dust particles generated dynamically -->
-        <div id="dustContainer"></div>
+    <!-- 开场动画容器 -->
+    <div id="intro-container">
+        <div class="video-wrapper">
+            <!-- 引入你的视频文件，保留声音 -->
+            <video id="intro-video" src="video_1.mp4" playsinline></video>
+        </div>
+        <div id="click-to-start">Click anywhere to enter</div>
     </div>
 
-    <!-- Main Canvas Viewport for Film & Space -->
-    <main class="relative w-screen h-screen flex flex-col items-center justify-center overflow-hidden bg-black">
-
-        <!-- ========================================== -->
-        <!-- SCREEN 1: CANNES INTRO / GODARD OPENING     -->
-        <!-- ========================================== -->
-        <section id="cannesScreen" class="absolute inset-0 w-full h-full flex items-center justify-center bg-black z-30 transition-opacity duration-1000">
-
-            <!-- Dynamic Aspect Ratio Viewport -->
-            <div id="filmViewport" class="aspect-frame ratio-4-3 bg-zinc-950 border border-zinc-800 flex items-center justify-center relative film-flicker">
-                
-                <!-- Vintage Film Vignette & Shadow -->
-                <div class="absolute inset-0 pointer-events-none shadow-[inset_0_0_100px_rgba(0,0,0,0.95)] z-20"></div>
-
-                <!-- Sprocket Hole Strips (Left & Right margins for 35mm feel) -->
-                <div class="absolute left-1 top-0 bottom-0 w-4 flex flex-col justify-between py-2 z-20 opacity-30">
-                    <div class="w-3 h-4 bg-zinc-700 rounded-sm my-1"></div>
-                    <div class="w-3 h-4 bg-zinc-700 rounded-sm my-1"></div>
-                    <div class="w-3 h-4 bg-zinc-700 rounded-sm my-1"></div>
-                    <div class="w-3 h-4 bg-zinc-700 rounded-sm my-1"></div>
-                    <div class="w-3 h-4 bg-zinc-700 rounded-sm my-1"></div>
-                    <div class="w-3 h-4 bg-zinc-700 rounded-sm my-1"></div>
-                </div>
-                <div class="absolute right-1 top-0 bottom-0 w-4 flex flex-col justify-between py-2 z-20 opacity-30">
-                    <div class="w-3 h-4 bg-zinc-700 rounded-sm my-1"></div>
-                    <div class="w-3 h-4 bg-zinc-700 rounded-sm my-1"></div>
-                    <div class="w-3 h-4 bg-zinc-700 rounded-sm my-1"></div>
-                    <div class="w-3 h-4 bg-zinc-700 rounded-sm my-1"></div>
-                    <div class="w-3 h-4 bg-zinc-700 rounded-sm my-1"></div>
-                    <div class="w-3 h-4 bg-zinc-700 rounded-sm my-1"></div>
-                </div>
-
-                <!-- STAGE 0: Audio Enable & Start Prompt -->
-                <div id="startPrompt" class="flex flex-col items-center justify-center z-30 p-6 text-center space-y-6">
-                    <div class="w-20 h-20 rounded-full border border-amber-500/40 flex items-center justify-center animate-pulse">
-                        <i class="fa-solid fa-film text-3xl text-amber-500"></i>
-                    </div>
-                    <div>
-                        <h2 class="font-cinzel text-xl md:text-2xl tracking-widest text-amber-200">FESTIVAL DE CANNES</h2>
-                        <p class="font-mono-code text-xs text-zinc-400 mt-2 uppercase tracking-widest">Palme d'Or Winner Selection</p>
-                    </div>
-                    <button onclick="startCannesExperience()" class="px-8 py-3 bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-black font-semibold font-cinzel tracking-widest text-sm rounded shadow-lg shadow-amber-900/40 transform hover:scale-105 transition-all">
-                        <i class="fa-solid fa-play mr-2"></i> INITIALIZE PROJECTION
-                    </button>
-                    <span class="text-[10px] font-mono-code text-zinc-500">Clicking enables vintage optical projector sound & interactive score</span>
-                </div>
-
-                <!-- STAGE 1: Cannes Official Selection Bump -->
-                <div id="cannesCard" class="hidden flex-col items-center justify-center text-center z-30 p-8 space-y-4 transform transition-all duration-700">
-                    <!-- Cannes Palm Leaf Vector Graphic -->
-                    <div class="w-28 h-28 md:w-36 md:h-36 mb-2 text-amber-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.5)]">
-                        <svg viewBox="0 0 100 100" fill="currentColor" class="w-full h-full">
-                            <!-- Artistic Palme d'Or Leaf Shape -->
-                            <path d="M50 90 C 50 70, 48 40, 50 10 C 52 40, 50 70, 50 90 Z"/>
-                            <!-- Left Leaves -->
-                            <path d="M49 75 C 35 65, 20 62, 12 66 C 25 58, 40 60, 49 70 Z"/>
-                            <path d="M49 60 C 30 48, 15 46, 8 52 C 22 42, 38 46, 49 55 Z"/>
-                            <path d="M49 45 C 28 32, 12 30, 6 36 C 18 26, 36 30, 49 40 Z"/>
-                            <path d="M49 30 C 32 18, 18 16, 10 22 C 22 14, 38 18, 49 26 Z"/>
-                            <!-- Right Leaves -->
-                            <path d="M51 75 C 65 65, 80 62, 88 66 C 75 58, 60 60, 51 70 Z"/>
-                            <path d="M51 60 C 70 48, 85 46, 92 52 C 78 42, 62 46, 51 55 Z"/>
-                            <path d="M51 45 C 72 32, 88 30, 94 36 C 82 26, 64 30, 51 40 Z"/>
-                            <path d="M51 30 C 68 18, 82 16, 90 22 C 78 14, 62 18, 51 26 Z"/>
-                        </svg>
-                    </div>
-                    <div class="border-t border-b border-amber-500/50 py-2 px-6">
-                        <h1 class="font-cinzel text-xl md:text-3xl font-bold tracking-[0.3em] text-amber-300 gold-glow uppercase">FESTIVAL DE CANNES</h1>
-                        <p class="font-cinzel text-xs md:text-sm tracking-[0.4em] text-amber-200/80 mt-1 uppercase">PALME D'OR BEST FILM</p>
-                    </div>
-                    <p class="font-mono-code text-[11px] text-zinc-400 tracking-widest uppercase">OFFICIAL SELECTION • GRAND PRIX 2026</p>
-                </div>
-
-                <!-- STAGE 2: Godard Classic Title Card -->
-                <div id="godardTitleCard" class="hidden flex-col items-center justify-center text-center z-30 p-6 space-y-4">
-                    <div class="bg-red-600 text-white font-black px-4 py-1 text-xs tracking-widest font-mono-code uppercase mb-2">
-                        UN FILM DE NOUVELLE VAGUE
-                    </div>
-                    <h1 class="font-playfair text-3xl md:text-5xl lg:text-6xl font-black italic text-white tracking-wide leading-tight max-w-2xl px-4 crimson-glow">
-                        Rose, nightingale, dawn and sunset
-                    </h1>
-                    <div class="w-16 h-1 bg-red-600 my-4"></div>
-                    <p class="font-mono-code text-xs text-zinc-300 uppercase tracking-widest">35MM EASTMANCOLOR / SOUND OPTICAL</p>
-                </div>
-
-                <!-- STAGE 3: Director Title Card -->
-                <div id="directorCard" class="hidden flex-col items-center justify-center text-center z-30 p-6 space-y-3">
-                    <span class="font-cinzel text-xs text-amber-400 tracking-[0.5em] uppercase">DIRECTED & CONCEPTUALIZED BY</span>
-                    <h2 class="font-cinzel text-3xl md:text-5xl font-bold text-white tracking-[0.2em] uppercase gold-glow">
-                        KINSLEY KONG
-                    </h2>
-                    <p class="font-mono-code text-[10px] text-zinc-400 tracking-widest uppercase mt-4">CINEMATOGRAPHY • EDITING • SOUND DESIGN</p>
-                </div>
-
-                <!-- STAGE 4: SMPTE Universal Film Countdown Leader -->
-                <div id="countdownLeader" class="hidden flex-col items-center justify-center z-30 relative w-full h-full">
-                    <!-- Target Crosshairs -->
-                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <div class="w-full h-[1px] bg-zinc-600/60"></div>
-                        <div class="h-full w-[1px] bg-zinc-600/60 absolute"></div>
-                        <div class="w-64 h-64 md:w-80 md:h-80 rounded-full border border-zinc-500/60 absolute"></div>
-                        <div class="w-48 h-48 md:w-60 md:h-60 rounded-full border border-zinc-500/60 absolute"></div>
-                    </div>
-                    <!-- Rotating Sweep Line -->
-                    <div class="w-64 h-64 md:w-80 md:h-80 relative flex items-center justify-center">
-                        <svg class="w-full h-full absolute inset-0 sweep-line" viewBox="0 0 100 100">
-                            <line x1="50" y1="50" x2="50" y2="0" stroke="rgba(255, 255, 255, 0.4)" stroke-width="2"/>
-                            <path d="M 50 50 L 50 0 A 50 50 0 0 1 100 50 Z" fill="rgba(255,255,255,0.08)"/>
-                        </svg>
-                        <span id="countdownNumber" class="font-mono-code font-bold text-6xl md:text-8xl text-zinc-100 z-10">5</span>
-                    </div>
-                    <div class="absolute bottom-6 font-mono-code text-[10px] text-zinc-400 tracking-widest uppercase">
-                        TRANSITION TO MAIN FRAMEWORK • SOUND SYNC MARK 35mm
-                    </div>
-                </div>
-
-                <!-- STAGE 5: Final Transition Banner "KINSLEY'S PERSONAL SPACE" -->
-                <div id="personalSpaceCard" class="hidden flex-col items-center justify-center text-center z-30 p-8 space-y-6">
-                    <div class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center">
-                        <i class="fa-solid fa-arrow-right-to-city text-white text-lg"></i>
-                    </div>
-                    <h1 class="font-cinzel text-2xl md:text-4xl font-bold tracking-[0.3em] text-white uppercase">
-                        KINSLEY'S PERSONAL SPACE
-                    </h1>
-                    <p class="font-mono-code text-xs text-zinc-400 tracking-widest">
-                        [ TAP SCREEN TO ENTER INTERACTIVE PORTAL ]
-                    </p>
-                    <button onclick="enterPersonalSpace()" class="mt-4 px-6 py-2.5 bg-white text-black font-mono-code text-xs uppercase tracking-widest hover:bg-zinc-200 transition-all rounded">
-                        ENTER PORTAL <i class="fa-solid fa-chevron-right ml-2"></i>
-                    </button>
-                </div>
-
-            </div>
-        </section>
-
-
-        <!-- ========================================== -->
-        <!-- SCREEN 2: MAIN PERSONAL SPACE PORTAL      -->
-        <!-- ========================================== -->
-        <section id="mainPortal" class="hidden absolute inset-0 w-full h-full flex flex-col justify-between p-4 md:p-8 z-20 overflow-y-auto bg-zinc-950/90 backdrop-blur-md">
+    <!-- 主界面容器 -->
+    <div id="main-container">
+        <div class="profile-content">
+            <h1>kinsleykong</h1>
+            <p>Welcome to my space</p>
             
-            <!-- Top Navigation / Header Bar -->
-            <header class="w-full flex items-center justify-between border-b border-zinc-800 pb-4">
-                <div class="flex items-center space-x-3">
-                    <span class="w-2.5 h-2.5 bg-red-600 rounded-full animate-ping"></span>
-                    <span class="font-cinzel font-bold text-sm md:text-base tracking-widest text-zinc-200">KINSLEY KONG</span>
-                    <span class="text-zinc-600">|</span>
-                    <span class="font-mono-code text-xs text-zinc-400 hidden sm:inline">ARCHIVE & TIMELINE</span>
+            <!-- 音乐播放器 -->
+            <div class="music-player">
+                <button class="play-btn" id="playAudioBtn">
+                    <i class="fa-solid fa-play" id="playIcon"></i>
+                </button>
+                <div class="track-info">
+                    <div class="track-title">Ambient Memories</div>
+                    <div class="track-artist">kinsleykong selection</div>
                 </div>
-
-                <!-- Action Controls -->
-                <div class="flex items-center space-x-3">
-                    <button onclick="replayIntro()" class="px-3 py-1.5 border border-zinc-700 hover:border-zinc-500 rounded font-mono-code text-xs text-zinc-300 hover:text-white transition-all flex items-center gap-2">
-                        <i class="fa-solid fa-rotate-left"></i> <span class="hidden sm:inline">REPLAY CANNES INTRO</span>
-                    </button>
-                    <button id="soundToggleBtn" onclick="toggleAudio()" class="w-9 h-9 border border-zinc-700 hover:border-zinc-500 rounded flex items-center justify-center text-zinc-300 hover:text-white transition-all">
-                        <i class="fa-solid fa-volume-high" id="soundIcon"></i>
-                    </button>
-                </div>
-            </header>
-
-            <!-- Center Content Area: Dual Live Countdowns -->
-            <div class="flex-1 flex flex-col items-center justify-center my-6 space-y-8 max-w-4xl mx-auto w-full">
-                
-                <!-- Film Title Subtle Banner -->
-                <div class="text-center">
-                    <span class="font-mono-code text-[11px] text-red-500 uppercase tracking-widest">PALME D'OR SELECTION</span>
-                    <h2 class="font-playfair text-xl md:text-3xl italic font-bold text-zinc-200 mt-1">"Rose, nightingale, dawn and sunset"</h2>
-                    <p class="font-mono-code text-xs text-zinc-500 mt-1">BASE DATE OF EXISTENCE: DECEMBER 22, 2002</p>
-                </div>
-
-                <!-- COUNTDOWN 1: Next Birthday Countdown (Top) -->
-                <div class="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl p-5 md:p-7 relative overflow-hidden shadow-2xl group hover:border-zinc-700 transition-all">
-                    <div class="absolute top-0 right-0 px-3 py-1 bg-amber-500/10 border-l border-b border-amber-500/20 rounded-bl text-[10px] font-mono-code text-amber-400">
-                        TIMECODE // COUNTDOWN
-                    </div>
-                    <div class="flex items-center space-x-3 mb-3">
-                        <i class="fa-solid fa-cake-candles text-amber-400 text-sm"></i>
-                        <h3 class="font-cinzel text-xs md:text-sm font-semibold tracking-widest text-zinc-300 uppercase">NEXT BIRTHDAY COUNTDOWN</h3>
-                    </div>
-                    <!-- Flip Counter / Digit Grid -->
-                    <div class="grid grid-cols-4 gap-2 md:gap-4 text-center mt-2">
-                        <div class="bg-black/60 border border-zinc-800 rounded-lg p-2 md:p-4">
-                            <span id="bdayDays" class="font-mono-code text-2xl md:text-5xl font-bold text-amber-400 block">00</span>
-                            <span class="font-mono-code text-[10px] text-zinc-500 uppercase mt-1 block">DAYS</span>
-                        </div>
-                        <div class="bg-black/60 border border-zinc-800 rounded-lg p-2 md:p-4">
-                            <span id="bdayHours" class="font-mono-code text-2xl md:text-5xl font-bold text-amber-400 block">00</span>
-                            <span class="font-mono-code text-[10px] text-zinc-500 uppercase mt-1 block">HOURS</span>
-                        </div>
-                        <div class="bg-black/60 border border-zinc-800 rounded-lg p-2 md:p-4">
-                            <span id="bdayMins" class="font-mono-code text-2xl md:text-5xl font-bold text-amber-400 block">00</span>
-                            <span class="font-mono-code text-[10px] text-zinc-500 uppercase mt-1 block">MINUTES</span>
-                        </div>
-                        <div class="bg-black/60 border border-zinc-800 rounded-lg p-2 md:p-4">
-                            <span id="bdaySecs" class="font-mono-code text-2xl md:text-5xl font-bold text-amber-400 block">00</span>
-                            <span class="font-mono-code text-[10px] text-zinc-500 uppercase mt-1 block">SECONDS</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- COUNTDOWN 2: Duration of Life Timecode (Bottom) -->
-                <div class="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl p-5 md:p-7 relative overflow-hidden shadow-2xl group hover:border-zinc-700 transition-all">
-                    <div class="absolute top-0 right-0 px-3 py-1 bg-red-500/10 border-l border-b border-red-500/20 rounded-bl text-[10px] font-mono-code text-red-400">
-                        TIMECODE // ELAPSED
-                    </div>
-                    <div class="flex items-center space-x-3 mb-3">
-                        <i class="fa-solid fa-hourglass-half text-red-400 text-sm"></i>
-                        <h3 class="font-cinzel text-xs md:text-sm font-semibold tracking-widest text-zinc-300 uppercase">TIME ELAPSED SINCE BIRTH (DEC 22, 2002)</h3>
-                    </div>
-                    <!-- Elapsed Time Grid -->
-                    <div class="grid grid-cols-5 gap-1.5 md:gap-3 text-center mt-2">
-                        <div class="bg-black/60 border border-zinc-800 rounded-lg p-2 md:p-3">
-                            <span id="lifeYears" class="font-mono-code text-xl md:text-4xl font-bold text-zinc-100 block">00</span>
-                            <span class="font-mono-code text-[9px] md:text-[10px] text-zinc-500 uppercase mt-1 block">YEARS</span>
-                        </div>
-                        <div class="bg-black/60 border border-zinc-800 rounded-lg p-2 md:p-3">
-                            <span id="lifeDays" class="font-mono-code text-xl md:text-4xl font-bold text-zinc-100 block">000</span>
-                            <span class="font-mono-code text-[9px] md:text-[10px] text-zinc-500 uppercase mt-1 block">DAYS</span>
-                        </div>
-                        <div class="bg-black/60 border border-zinc-800 rounded-lg p-2 md:p-3">
-                            <span id="lifeHours" class="font-mono-code text-xl md:text-4xl font-bold text-zinc-100 block">00</span>
-                            <span class="font-mono-code text-[9px] md:text-[10px] text-zinc-500 uppercase mt-1 block">HOURS</span>
-                        </div>
-                        <div class="bg-black/60 border border-zinc-800 rounded-lg p-2 md:p-3">
-                            <span id="lifeMins" class="font-mono-code text-xl md:text-4xl font-bold text-zinc-100 block">00</span>
-                            <span class="font-mono-code text-[9px] md:text-[10px] text-zinc-500 uppercase mt-1 block">MINS</span>
-                        </div>
-                        <div class="bg-black/60 border border-zinc-800 rounded-lg p-2 md:p-3">
-                            <span id="lifeSecs" class="font-mono-code text-xl md:text-4xl font-bold text-red-500 block">00</span>
-                            <span class="font-mono-code text-[9px] md:text-[10px] text-zinc-500 uppercase mt-1 block">SECS</span>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Bottom Dock: Integrated Music Player & Playlist Manager -->
-            <footer class="w-full bg-zinc-900/90 border border-zinc-800 rounded-xl p-3 md:p-4 max-w-5xl mx-auto shadow-2xl">
-                <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-                    
-                    <!-- Song Info & "kinsley'choice" badge -->
-                    <div class="flex items-center space-x-3 w-full md:w-auto">
-                        <div class="w-12 h-12 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center flex-shrink-0 relative overflow-hidden group">
-                            <i class="fa-solid fa-compact-disc text-amber-400 text-xl group-hover:rotate-180 transition-transform duration-700"></i>
-                            <div id="playingWave" class="hidden absolute inset-0 bg-red-950/60 items-center justify-center gap-0.5 px-2">
-                                <span class="w-1 h-4 bg-red-500 animate-bounce"></span>
-                                <span class="w-1 h-6 bg-red-500 animate-bounce" style="animation-delay: 0.1s"></span>
-                                <span class="w-1 h-3 bg-red-500 animate-bounce" style="animation-delay: 0.2s"></span>
-                            </div>
-                        </div>
-                        <div class="overflow-hidden">
-                            <div class="flex items-center space-x-2">
-                                <h4 id="trackTitle" class="font-syne font-semibold text-sm text-zinc-100 truncate">Godard's Theme (Synthesized Noir)</h4>
-                                <span class="font-playfair italic text-[11px] text-amber-400/90 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 flex-shrink-0">
-                                    kinsley'choice
-                                </span>
-                            </div>
-                            <p id="trackArtist" class="font-mono-code text-xs text-zinc-400 truncate mt-0.5">Cannes Soundtrack • Original Selection</p>
-                        </div>
-                    </div>
-
-                    <!-- Audio Controls & Progress Bar -->
-                    <div class="flex flex-col items-center w-full md:w-1/2 space-y-2">
-                        <div class="flex items-center space-x-4">
-                            <button onclick="prevTrack()" class="text-zinc-400 hover:text-white text-xs transition-colors"><i class="fa-solid fa-backward-step"></i></button>
-                            <button onclick="togglePlayPause()" id="playPauseBtn" class="w-9 h-9 rounded-full bg-zinc-100 text-black flex items-center justify-center hover:bg-amber-400 transition-colors">
-                                <i class="fa-solid fa-play text-xs ml-0.5" id="playIcon"></i>
-                            </button>
-                            <button onclick="nextTrack()" class="text-zinc-400 hover:text-white text-xs transition-colors"><i class="fa-solid fa-forward-step"></i></button>
-                        </div>
-                        <!-- Timeline Slider -->
-                        <div class="w-full flex items-center space-x-2">
-                            <span id="currentTime" class="font-mono-code text-[10px] text-zinc-500">0:00</span>
-                            <div class="flex-1 h-1 bg-zinc-800 rounded cursor-pointer relative" onclick="seekAudio(event)">
-                                <div id="progressBar" class="h-full bg-amber-400 rounded w-0 relative"></div>
-                            </div>
-                            <span id="durationTime" class="font-mono-code text-[10px] text-zinc-500">2:45</span>
-                        </div>
-                    </div>
-
-                    <!-- Playlist & Custom Audio Upload Button -->
-                    <div class="flex items-center space-x-2 w-full md:w-auto justify-end">
-                        <label class="cursor-pointer px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded font-mono-code text-xs transition-all flex items-center gap-1.5 border border-zinc-700">
-                            <i class="fa-solid fa-plus text-amber-400"></i>
-                            <span>ADD TRACK</span>
-                            <input type="file" id="audioUpload" accept="audio/*" class="hidden" onchange="handleAudioUpload(event)">
-                        </label>
-                        <button onclick="togglePlaylistModal()" class="px-3 py-1.5 border border-zinc-700 hover:border-zinc-500 rounded font-mono-code text-xs text-zinc-300 hover:text-white transition-all">
-                            <i class="fa-solid fa-list-ul"></i>
-                        </button>
-                    </div>
-
-                </div>
-            </footer>
-
-        </section>
-
-    </main>
-
-    <!-- Playlist Modal -->
-    <div id="playlistModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-        <div class="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-md p-6 relative">
-            <button onclick="togglePlaylistModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-            <h3 class="font-cinzel text-lg font-bold text-zinc-200 mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-compact-disc text-amber-400"></i> PLAYLIST ARCHIVE
-            </h3>
-            <div id="playlistContainer" class="space-y-2 max-h-60 overflow-y-auto pr-1">
-                <!-- Tracks dynamically injected here -->
             </div>
         </div>
     </div>
 
+    <!-- 背景音乐音频源（可自行替换为你的音乐链接或本地音乐文件） -->
+    <audio id="bgm" src="https://www.bensound.com/bensound-music/bensound-thejazzpiano.mp3" preload="auto" loop></audio>
 
-    <!-- =================
+    <script>
+        const introContainer = document.getElementById('intro-container');
+        const mainContainer = document.getElementById('main-container');
+        const video = document.getElementById('intro-video');
+        const clickPrompt = document.getElementById('click-to-start');
+        
+        const bgm = document.getElementById('bgm');
+        const playAudioBtn = document.getElementById('playAudioBtn');
+        const playIcon = document.getElementById('playIcon');
+
+        let isStarted = false;
+
+        // 用户点击任意地方以启动视频和声音（解决现代浏览器对自动播放音频的限制）
+        function startExperience() {
+            if (isStarted) return;
+            isStarted = true;
+            clickPrompt.style.display = 'none';
+
+            video.muted = false; // 确保声音开启
+            video.play().catch(error => {
+                console.log("Playback prevented:", error);
+            });
+        }
+
+        window.addEventListener('click', startExperience);
+
+        // 视频播放结束后的自动跳转逻辑
+        video.addEventListener('ended', () => {
+            // 1. 开场动画层淡出
+            introContainer.style.opacity = '0';
+            setTimeout(() => {
+                introContainer.style.display = 'none';
+                // 2. 显示主界面
+                mainContainer.classList.add('show');
+                
+                // 3. 可选：视频结束后自动无缝衔接播放背景音乐
+                bgm.play().then(() => {
+                    playIcon.className = "fa-solid fa-pause";
+                }).catch(e => console.log("BGM autoplay blocked"));
+            }, 1000); // 1秒过渡时间与 CSS 保持一致
+        });
+
+        // 音乐播放器控制按钮交互
+        playAudioBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // 阻止触发全局点击
+            if (bgm.paused) {
+                bgm.play();
+                playIcon.className = "fa-solid fa-pause";
+            } else {
+                bgm.pause();
+                playIcon.className = "fa-solid fa-play";
+            }
+        });
+    </script>
+</body>
+</html>
