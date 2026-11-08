@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -367,7 +366,10 @@
                             <span class="font-mono-code text-[10px] text-zinc-500 uppercase mt-1 block">MINUTES</span>
                         </div>
                         <div class="bg-black/60 border border-zinc-800 rounded-lg p-2 md:p-4">
-                            <span id="bdaySecs" class="font-mono-code text-2xl md:text-5xl font-bold text-amber-400 block">00</span>
+                            <div class="flex items-baseline justify-center">
+                                <span id="bdaySecs" class="font-mono-code text-2xl md:text-5xl font-bold text-amber-400">00</span>
+                                <span id="bdayMs" class="font-mono-code text-xs text-amber-500/70 ml-1 font-normal">.000</span>
+                            </div>
                             <span class="font-mono-code text-[10px] text-zinc-500 uppercase mt-1 block">SECONDS</span>
                         </div>
                     </div>
@@ -401,7 +403,10 @@
                             <span class="font-mono-code text-[9px] md:text-[10px] text-zinc-500 uppercase mt-1 block">MINS</span>
                         </div>
                         <div class="bg-black/60 border border-zinc-800 rounded-lg p-2 md:p-3">
-                            <span id="lifeSecs" class="font-mono-code text-xl md:text-4xl font-bold text-red-500 block">00</span>
+                            <div class="flex items-baseline justify-center">
+                                <span id="lifeSecs" class="font-mono-code text-xl md:text-4xl font-bold text-red-500">00</span>
+                                <span id="lifeMs" class="font-mono-code text-[9px] md:text-[10px] text-red-400/70 ml-0.5">.000</span>
+                            </div>
                             <span class="font-mono-code text-[9px] md:text-[10px] text-zinc-500 uppercase mt-1 block">SECS</span>
                         </div>
                     </div>
@@ -476,16 +481,4 @@
     <div id="playlistModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-md p-6 relative">
             <button onclick="togglePlaylistModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-            <h3 class="font-cinzel text-lg font-bold text-zinc-200 mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-compact-disc text-amber-400"></i> PLAYLIST ARCHIVE
-            </h3>
-            <div id="playlistContainer" class="space-y-2 max-h-60 overflow-y-auto pr-1">
-                <!-- Tracks dynamically injected here -->
-            </div>
-        </div>
-    </div>
-
-
-    <!-- =================
+                <i clas
