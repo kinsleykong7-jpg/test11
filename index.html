@@ -1,260 +1,454 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>kinsleykong - Home</title>
-    <!-- 引入 Google Fonts 提升排版质感 -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-    <!-- 引入 FontAwesome 图标库用于音乐播放器图标 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kinsleykong</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Courier+Prime:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            background-color: #ffffff;
-            font-family: 'Inter', sans-serif;
-            color: #222222;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Courier Prime', 'Courier New', monospace;
+    }
 
-        /* --- 开场动画层 --- */
-        #intro-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            transition: opacity 1s ease-in-out;
-        }
+    /* ========== 开场视频页 ========== */
+    #intro {
+      position: fixed;
+      inset: 0;
+      background: #111;
+      z-index: 100;
+      transition: opacity 0.8s ease, visibility 0.8s;
+    }
 
-        .video-wrapper {
-            position: relative;
-            width: 500px;
-            height: 500px;
-            max-width: 90vw;
-            max-height: 90vh;
-            overflow: hidden;
-            border-radius: 12px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
-        }
+    #intro.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
 
-        /* 放大并裁剪视频，完美去掉右侧点赞按钮，同时保持画面和谐 */
-        .video-wrapper video {
-            position: absolute;
-            top: 0;
-            left: -15%; /* 向左微调裁剪右侧多余的点赞按钮区域 */
-            width: 130%; /* 放大视频宽度以掩盖裁切痕迹 */
-            height: 100%;
-            object-fit: cover;
-        }
+    #intro-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
 
-        /* 引导点击提示（防止浏览器自动播放音频策略拦截，点击任意处可激活声音并播放视频） */
-        #click-to-start {
-            position: absolute;
-            bottom: 30px;
-            font-size: 14px;
-            color: #777777;
-            letter-spacing: 1px;
-            animation: pulse 1.5s infinite;
-            cursor: pointer;
-            z-index: 101;
-        }
+    .vignette {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.3) 100%);
+    }
 
-        @keyframes pulse {
-            0% { opacity: 0.4; }
-            50% { opacity: 1; }
-            100% { opacity: 0.4; }
-        }
+    .skip-btn {
+      position: absolute;
+      bottom: 28px;
+      right: 28px;
+      color: rgba(255,255,255,0.55);
+      font-size: 13px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      z-index: 10;
+      transition: color 0.25s;
+      user-select: none;
+      background: none;
+      border: none;
+      font-family: inherit;
+    }
+    .skip-btn:hover {
+      color: rgba(255,255,255,0.95);
+    }
 
-        /* --- 主界面层 --- */
-        #main-container {
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 1.2s ease-in-out;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            width: 100%;
-            height: 100%;
-        }
+    /* ========== 主页面 ========== */
+    #main {
+      min-height: 100vh;
+      background: #f7f3eb;
+      color: #2c2c2c;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(ellipse at 20% 20%, rgba(200,180,150,0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(180,160,140,0.12) 0%, transparent 50%);
+    }
 
-        #main-container.show {
-            opacity: 1;
-            visibility: visible;
-        }
+    .container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+      text-align: center;
+    }
 
-        .profile-content h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 3.5rem;
-            font-weight: 600;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-            color: #111;
-        }
+    .name {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(2.8rem, 8vw, 5.2rem);
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      color: #1a1a1a;
+      margin-bottom: 12px;
+    }
 
-        .profile-content p {
-            font-size: 1rem;
-            color: #666;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            margin-bottom: 40px;
-        }
+    .name::after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 1px;
+      background: #b8a88a;
+      margin: 18px auto 0;
+    }
 
-        /* 优雅的音乐播放器设计 */
-        .music-player {
-            background: #fafafa;
-            border: 1px solid #eaeaea;
-            padding: 20px 30px;
-            border-radius: 50px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-            width: 320px;
-        }
+    .tagline {
+      font-size: 0.95rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #8a7a66;
+      margin-bottom: 56px;
+      font-style: italic;
+    }
 
-        .play-btn {
-            background: #111;
-            color: #fff;
-            border: none;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s;
-        }
+    /* 音乐播放器 */
+    .player {
+      width: min(360px, 90vw);
+      background: #fffef9;
+      border: 1px solid #e8e0d0;
+      border-radius: 16px;
+      padding: 28px 24px 22px;
+      box-shadow: 
+        0 4px 24px rgba(0,0,0,0.06),
+        0 1px 3px rgba(0,0,0,0.04);
+    }
 
-        .play-btn:hover {
-            transform: scale(1.05);
-        }
+    .player-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
 
-        .track-info {
-            text-align: left;
-            flex-grow: 1;
-            overflow: hidden;
-        }
+    .album-art {
+      width: 64px;
+      height: 64px;
+      border-radius: 10px;
+      background: linear-gradient(145deg, #d4c4a8, #b8a88a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      color: #5a4a3a;
+    }
 
-        .track-title {
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #222;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+    .album-art svg {
+      width: 28px;
+      height: 28px;
+      opacity: 0.75;
+    }
 
-        .track-artist {
-            font-size: 0.75rem;
-            color: #888;
-            margin-top: 2px;
-        }
-    </style>
+    .track-info {
+      text-align: left;
+      overflow: hidden;
+    }
+
+    .track-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #2a2a2a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .track-artist {
+      font-size: 0.85rem;
+      color: #9a8a76;
+      margin-top: 3px;
+    }
+
+    .progress-wrap {
+      margin-bottom: 18px;
+    }
+
+    .progress-bar {
+      height: 4px;
+      background: #ebe4d6;
+      border-radius: 2px;
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: #8a7a66;
+      border-radius: 2px;
+      transition: width 0.1s linear;
+    }
+
+    .time-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #a09080;
+      margin-top: 6px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+    }
+
+    .ctrl-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #5a4a3a;
+      padding: 8px;
+      border-radius: 50%;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ctrl-btn:hover {
+      background: #f0eae0;
+      color: #2a2a2a;
+    }
+
+    .ctrl-btn.play {
+      width: 52px;
+      height: 52px;
+      background: #2c2c2c;
+      color: #f7f3eb;
+    }
+
+    .ctrl-btn.play:hover {
+      background: #1a1a1a;
+      transform: scale(1.04);
+    }
+
+    .ctrl-btn svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .ctrl-btn.play svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .paper-note {
+      margin-top: 64px;
+      max-width: 320px;
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: #6a5a4a;
+      border-left: 2px solid #d4c4a8;
+      padding-left: 16px;
+      text-align: left;
+    }
+
+    footer {
+      padding: 24px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: #b0a090;
+      letter-spacing: 0.1em;
+    }
+
+    @media (max-width: 480px) {
+      .name { letter-spacing: 0.04em; }
+      .player { padding: 22px 18px 18px; }
+    }
+  </style>
 </head>
 <body>
 
-    <!-- 开场动画容器 -->
-    <div id="intro-container">
-        <div class="video-wrapper">
-            <!-- 引入你的视频文件，保留声音 -->
-            <video id="intro-video" src="video_1.mp4" playsinline></video>
+  <!-- ========== 开场视频 ========== -->
+  <div id="intro">
+    <video id="intro-video" autoplay playsinline muted preload="auto">
+      <source src="intro_typewriter_1.5x.mp4" type="video/mp4">
+    </video>
+    <div class="vignette"></div>
+    <button class="skip-btn" id="skip-btn">点击跳过 ›</button>
+  </div>
+
+  <!-- ========== 主页面 ========== -->
+  <div id="main">
+    <div class="container">
+      <h1 class="name">kinsleykong</h1>
+      <p class="tagline">send a love letter</p>
+
+      <div class="player">
+        <div class="player-header">
+          <div class="album-art">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 18V5l12-2v13" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="6" cy="18" r="3"/>
+              <circle cx="18" cy="16" r="3"/>
+            </svg>
+          </div>
+          <div class="track-info">
+            <div class="track-title" id="track-title">from the market</div>
+            <div class="track-artist">kinsleykong · sunday</div>
+          </div>
         </div>
-        <div id="click-to-start">Click anywhere to enter</div>
+
+        <div class="progress-wrap">
+          <div class="progress-bar" id="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+          <div class="time-row">
+            <span id="current-time">0:00</span>
+            <span id="duration">0:00</span>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button class="ctrl-btn" id="prev-btn" title="上一首">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+          </button>
+          <button class="ctrl-btn play" id="play-btn" title="播放/暂停">
+            <svg id="play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+          <button class="ctrl-btn" id="next-btn" title="下一首">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="paper-note">
+        sunday, november 8th<br>
+        downtown lafayette<br>
+        10 to 3
+      </div>
     </div>
 
-    <!-- 主界面容器 -->
-    <div id="main-container">
-        <div class="profile-content">
-            <h1>kinsleykong</h1>
-            <p>Welcome to my space</p>
-            
-            <!-- 音乐播放器 -->
-            <div class="music-player">
-                <button class="play-btn" id="playAudioBtn">
-                    <i class="fa-solid fa-play" id="playIcon"></i>
-                </button>
-                <div class="track-info">
-                    <div class="track-title">Ambient Memories</div>
-                    <div class="track-artist">kinsleykong selection</div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <footer>© kinsleykong</footer>
+  </div>
 
-    <!-- 背景音乐音频源（可自行替换为你的音乐链接或本地音乐文件） -->
-    <audio id="bgm" src="https://www.bensound.com/bensound-music/bensound-thejazzpiano.mp3" preload="auto" loop></audio>
+  <!-- 音乐（把你的 mp3 文件名填到这里） -->
+  <audio id="audio" preload="metadata">
+    <!-- 示例：<source src="your-song.mp3" type="audio/mpeg"> -->
+  </audio>
 
-    <script>
-        const introContainer = document.getElementById('intro-container');
-        const mainContainer = document.getElementById('main-container');
-        const video = document.getElementById('intro-video');
-        const clickPrompt = document.getElementById('click-to-start');
-        
-        const bgm = document.getElementById('bgm');
-        const playAudioBtn = document.getElementById('playAudioBtn');
-        const playIcon = document.getElementById('playIcon');
+  <script>
+    const intro = document.getElementById('intro');
+    const video = document.getElementById('intro-video');
+    const skipBtn = document.getElementById('skip-btn');
 
-        let isStarted = false;
+    // 尝试开启声音
+    video.addEventListener('loadeddata', () => {
+      setTimeout(() => {
+        video.muted = false;
+        video.volume = 0.9;
+      }, 400);
+    });
 
-        // 用户点击任意地方以启动视频和声音（解决现代浏览器对自动播放音频的限制）
-        function startExperience() {
-            if (isStarted) return;
-            isStarted = true;
-            clickPrompt.style.display = 'none';
+    // 视频结束或点击跳过 → 进入主页
+    function goToMain() {
+      intro.classList.add('hidden');
+      // 停止视频
+      video.pause();
+    }
 
-            video.muted = false; // 确保声音开启
-            video.play().catch(error => {
-                console.log("Playback prevented:", error);
-            });
-        }
+    video.addEventListener('ended', goToMain);
+    skipBtn.addEventListener('click', goToMain);
+    video.addEventListener('click', goToMain);
 
-        window.addEventListener('click', startExperience);
+    // 如果浏览器阻止了自动播放，点击后播放
+    video.addEventListener('click', () => {
+      if (video.paused) {
+        video.play().then(() => { video.muted = false; }).catch(() => {});
+      }
+    });
 
-        // 视频播放结束后的自动跳转逻辑
-        video.addEventListener('ended', () => {
-            // 1. 开场动画层淡出
-            introContainer.style.opacity = '0';
-            setTimeout(() => {
-                introContainer.style.display = 'none';
-                // 2. 显示主界面
-                mainContainer.classList.add('show');
-                
-                // 3. 可选：视频结束后自动无缝衔接播放背景音乐
-                bgm.play().then(() => {
-                    playIcon.className = "fa-solid fa-pause";
-                }).catch(e => console.log("BGM autoplay blocked"));
-            }, 1000); // 1秒过渡时间与 CSS 保持一致
+    // ========== 音乐播放器逻辑 ==========
+    const audio = document.getElementById('audio');
+    const playBtn = document.getElementById('play-btn');
+    const playIcon = document.getElementById('play-icon');
+    const progressBar = document.getElementById('progress-bar');
+    const progressFill = document.getElementById('progress-fill');
+    const currentTimeEl = document.getElementById('current-time');
+    const durationEl = document.getElementById('duration');
+    const trackTitle = document.getElementById('track-title');
+
+    let isPlaying = false;
+
+    function formatTime(sec) {
+      if (isNaN(sec)) return '0:00';
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return `\( {m}: \){s.toString().padStart(2, '0')}`;
+    }
+
+    audio.addEventListener('timeupdate', () => {
+      if (audio.duration) {
+        progressFill.style.width = (audio.currentTime / audio.duration * 100) + '%';
+        currentTimeEl.textContent = formatTime(audio.currentTime);
+      }
+    });
+
+    audio.addEventListener('loadedmetadata', () => {
+      durationEl.textContent = formatTime(audio.duration);
+    });
+
+    audio.addEventListener('ended', () => {
+      isPlaying = false;
+      playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+      progressFill.style.width = '0%';
+    });
+
+    playBtn.addEventListener('click', () => {
+      // 如果还没有添加音乐文件
+      if (!audio.src || audio.src === window.location.href || audio.children.length === 0) {
+        trackTitle.textContent = '请先添加音乐文件';
+        setTimeout(() => trackTitle.textContent = 'from the market', 2200);
+        return;
+      }
+
+      if (isPlaying) {
+        audio.pause();
+        playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+      } else {
+        audio.play().catch(() => {
+          trackTitle.textContent = '无法播放，请检查文件';
         });
+        playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+      }
+      isPlaying = !isPlaying;
+    });
 
-        // 音乐播放器控制按钮交互
-        playAudioBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // 阻止触发全局点击
-            if (bgm.paused) {
-                bgm.play();
-                playIcon.className = "fa-solid fa-pause";
-            } else {
-                bgm.pause();
-                playIcon.className = "fa-solid fa-play";
-            }
-        });
-    </script>
+    progressBar.addEventListener('click', (e) => {
+      if (!audio.duration) return;
+      const rect = progressBar.getBoundingClientRect();
+      const pct = (e.clientX - rect.left) / rect.width;
+      audio.currentTime = pct * audio.duration;
+    });
+
+    document.getElementById('prev-btn').addEventListener('click', () => {
+      audio.currentTime = 0;
+    });
+
+    document.getElementById('next-btn').addEventListener('click', () => {
+      audio.currentTime = 0;
+      if (isPlaying) audio.play();
+    });
+  </script>
 </body>
 </html>
