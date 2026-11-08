@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>A FILM BY KINSLEY — CANNES OFFICIAL SELECTION</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-black: #0a0a0a;
+      --film-white: #e6e6e6;
+      --film-gray: #888888;
+      --border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--bg-black);
+      color: var(--film-white);
+      font-family: 'Cinzel', serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    /* 全屏电影胶片质感 */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: radial-gradient(circle, transparent 50%, rgba(0,0,0,0.85) 100%);
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    /* ---------------- 幕一：复古信封开场 ---------------- */
+    .envelope-screen {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: #111115;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 200;
+      perspective: 1000px;
+      transition: opacity 1.2s ease, visibility 1.2s;
+    }
+
+    .envelope-screen.opened {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    /* 信封容器 */
+    .envelope-wrapper {
+      position: relative;
+      width: 320px;
+      height: 220px;
+      background: #1c1c22;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: transform 0.4s ease;
+    }
+
+    .envelope-wrapper:hover {
+      transform: scale(1.03);
+    }
+
+    /* 火漆印章 Wax Seal */
+    .wax-seal {
+      width: 70px;
+      height: 70px;
+      background: radial-gradient(circle, #3a3a48 0%, #1a1a24 100%);
+      border: 2px solid rgba(255,255,255,0.4);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+      z-index: 10;
+      transition: transform 0.3s ease, filter 0.3s ease;
+    }
+
+    .wax-seal:hover {
+      filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));
+    }
+
+    .wax-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-style: italic;
+      color: var(--film-white);
+    }
+
+    .seal-hint {
+      margin-top: 2rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.25em;
+      color: var(--film-gray);
+      animation: pulseText 2s infinite;
+    }
+
+    @keyframes pulseText {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    /* ---------------- 幕二：黑白戛纳电影正片 ---------------- */
+    .film-frame {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 2rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    .viewfinder-header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.8rem;
+      color: var(--film-gray);
+    }
+
+    .rec-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      background-color: #ff3b30;
+      border-radius: 50%;
+      margin-right: 6px;
+      animation: blink 1s step-start infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .center-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      text-align: center;
+    }
+
+    .cannes-header {
+      letter-spacing: 0.3em;
+    }
+    .cannes-header .fest { font-size: 0.75rem; color: var(--film-gray); }
+    .cannes-header .title { font-size: 1.6rem; margin: 0.5rem 0; font-weight: 600; }
+    .cannes-header .director { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1rem; }
+
+    /* 黑胶唱片 */
+    .vinyl-player {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #222 30%, #000 70%);
+      border: 1px solid var(--border-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 0 25px rgba(0,0,0,0.8);
+      margin: 1rem 0;
+    }
+
+    .isPlaying .vinyl-player {
+      animation: spinVinyl 10s linear infinite;
+    }
+    @keyframes spinVinyl { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    /* 场记板倒计时 */
+    .clapperboard-container {
+      display: flex;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .clapper-card {
+      background: rgba(20, 20, 20, 0.8);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 0.8rem 1.5rem;
+      font-family: 'Courier Prime', monospace;
+    }
+
+    .clapper-head {
+      font-size: 0.7rem;
+      color: var(--film-gray);
+      letter-spacing: 0.2em;
+      margin-bottom: 0.4rem;
+      border-bottom: 1px dashed var(--border-color);
+    }
+
+    .clapper-timer {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--film-white);
+    }
+
+    .viewfinder-footer {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Courier Prime', monospace;
+      font-size: 0.8rem;
+    }
+
+    .btn-credits {
+      background: transparent;
+      border: none;
+      color: var(--film-white);
+      font-family: 'Cinzel', serif;
+      cursor: pointer;
+      letter-spacing: 0.2em;
+      border-bottom: 1px solid var(--film-white);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 幕一：视频同款复古火漆信封开场 -->
+  <div class="envelope-screen" id="envelopeScreen">
+    <div class="envelope-wrapper" id="openEnvelope">
+      <div class="wax-seal">
+        <span class="wax-logo">K</span>
+      </div>
+    </div>
+    <div class="seal-hint">[ UNSEAL TO OPEN FILM ]</div>
+  </div>
+
+  <!-- 幕二：戛纳黑白电影主界面 -->
+  <div class="film-frame">
+    <div class="viewfinder-header">
+      <div><span class="rec-dot"></span>REC</div>
+      <div>FPS 24.0</div>
+      <div>B&W 35MM</div>
+    </div>
+
+    <div class="center-content">
+      <div class="cannes-header">
+        <div class="fest">SELECTION OFFICIELLE — FESTIVAL DE CANNES</div>
+        <div class="title">KINSLEY'S PERSONAL SPACE</div>
+        <div class="director">A Film by Kinsley</div>
+      </div>
+
+      <div class="vinyl-player" id="vinylPlayer" title="Click to Play/Pause OST">
+        <div style="font-size: 0.65rem; font-weight: bold;">OST</div>
+      </div>
+
+      <div class="clapperboard-container">
+        <div class="clapper-card">
+          <div class="clapper-head">SCENE 01 • NEXT JOURNEY</div>
+          <div class="clapper-timer" id="timer1">00d 00h 00m</div>
+        </div>
+        <div class="clapper-card">
+          <div class="clapper-head">SCENE 02 • NEW YEAR</div>
+          <div class="clapper-timer" id="timer2">000d 00h</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="viewfinder-footer">
+      <div style="color: var(--film-gray); font-style: italic;" id="ostStatus">OST: Midnight in Paris</div>
+      <button class="btn-credits" onclick="alert('Directed by Kinsley\nSpecial Thanks to Truffaut & Woolf')">END CREDITS</button>
+    </div>
+  </div>
+
+  <script>
+    const envelopeScreen = document.getElementById('envelopeScreen');
+    const openEnvelope = document.getElementById('openEnvelope');
+    const vinylPlayer = document.getElementById('vinylPlayer');
+    const ostStatus = document.getElementById('ostStatus');
+    
+    const audio = new Audio('https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3');
+    audio.loop = true;
+    let isPlaying = false;
+
+    // 点击火漆印章解开信封
+    openEnvelope.addEventListener('click', () => {
+      envelopeScreen.classList.add('opened');
+      audio.play().catch(() => {});
+      isPlaying = true;
+      document.body.classList.add('isPlaying');
+      ostStatus.innerText = "OST: Now Playing — Scene 01";
+    });
+
+    vinylPlayer.addEventListener('click', () => {
+      isPlaying = !isPlaying;
+      if (isPlaying) {
+        document.body.classList.add('isPlaying');
+        audio.play().catch(() => {});
+        ostStatus.innerText = "OST: Now Playing — Scene 01";
+      } else {
+        document.body.classList.remove('isPlaying');
+        audio.pause();
+        ostStatus.innerText = "OST: Paused";
+      }
+    });
+
+    function updateTimers() {
+      const now = new Date();
+      const target1 = new Date(now.getTime() + (15 * 24 * 60 * 60 * 1000));
+      const diff1 = target1 - now;
+      const d1 = Math.floor(diff1 / (1000 * 60 * 60 * 24));
+      const h1 = Math.floor((diff1 / (1000 * 60 * 60)) % 24);
+      const m1 = Math.floor((diff1 / (1000 * 60)) % 60);
+      document.getElementById('timer1').innerText = `${String(d1).padStart(2,'0')}D ${String(h1).padStart(2,'0')}H ${String(m1).padStart(2,'0')}M`;
+
+      const nextYear = now.getFullYear() + 1;
+      const target2 = new Date(`January 1, ${nextYear} 00:00:00`);
+      const diff2 = target2 - now;
+      const d2 = Math.floor(diff2 / (1000 * 60 * 60 * 24));
+      const h2 = Math.floor((diff2 / (1000 * 60 * 60)) % 24);
+      document.getElementById('timer2').innerText = `${String(d2).padStart(3,'0')}D ${String(h2).padStart(2,'0')}H`;
+    }
+    setInterval(updateTimers, 1000);
+    updateTimers();
+  </script>
+</body>
+</html>
