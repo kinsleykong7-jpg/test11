@@ -1,721 +1,491 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Kinsley's Personal Space</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --mauve: #c9a9a6;
-      --mauve-deep: #a67c7a;
-      --mauve-light: #e8d5d3;
-      --satin: #d4b8b5;
-      --cream: #f8f1ef;
-      --ink: #2c2423;
-      --soft-ink: #5c4a48;
-      --gold: #c9b896;
-      --seal: #8b3a3a;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rose, nightingale, dawn and sunset — Directed by KinsleyKong</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <style>
+        /* Custom Font Assignments */
+        .font-cinzel { font-family: 'Cinzel', serif; }
+        .font-playfair { font-family: 'Playfair Display', serif; }
+        .font-mono-code { font-family: 'Space Mono', monospace; }
+        .font-syne { font-family: 'Syne', sans-serif; }
 
-    html, body {
-      height: 100%;
-      overflow: hidden;
-      font-family: 'Inter', system-ui, sans-serif;
-      background: #1a1413;
-      color: var(--cream);
-    }
+        /* Film Noise & FX Layering */
+        .grain-overlay {
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
+            animation: grainAnim 0.3s steps(6) infinite;
+            pointer-events: none;
+            z-index: 40;
+        }
 
-    /* ========== OPENING CARD ========== */
-    #opening {
-      position: fixed;
-      inset: 0;
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: radial-gradient(ellipse at center, #3d2c2b 0%, #1a1413 70%);
-      transition: opacity 1.2s ease, visibility 1.2s;
-    }
+        @keyframes grainAnim {
+            0% { transform: translate(0, 0); }
+            20% { transform: translate(-5%, 5%); }
+            40% { transform: translate(-15%, -5%); }
+            60% { transform: translate(5%, -12%); }
+            80% { transform: translate(-8%, 8%); }
+            100% { transform: translate(12%, 4%); }
+        }
 
-    #opening.hidden {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
+        /* Jumpy Scratches / Godard Lines Effect */
+        .scratch-line {
+            position: absolute;
+            top: 0;
+            width: 1px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.45);
+            pointer-events: none;
+            z-index: 42;
+            opacity: 0;
+        }
 
-    .card-wrapper {
-      position: relative;
-      width: min(340px, 86vw);
-      height: min(520px, 78vh);
-      perspective: 1600px;
-      cursor: pointer;
-    }
+        .scratch-black {
+            background: rgba(0, 0, 0, 0.7);
+            width: 2px;
+        }
 
-    .invitation-card {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      transform-style: preserve-3d;
-      transition: transform 1.4s cubic-bezier(0.23, 1, 0.32, 1);
-    }
+        @keyframes lineJitter {
+            0% { left: 12%; opacity: 0; }
+            5% { left: 12%; opacity: 0.8; }
+            10% { left: 13%; opacity: 0.3; }
+            15% { left: 12.5%; opacity: 0; }
+            40% { left: 74%; opacity: 0; }
+            43% { left: 74%; opacity: 0.9; }
+            46% { left: 74.5%; opacity: 0; }
+            70% { left: 45%; opacity: 0; }
+            72% { left: 45.2%; opacity: 0.7; }
+            75% { left: 45%; opacity: 0; }
+            100% { left: 90%; opacity: 0; }
+        }
 
-    .card-front {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(145deg, #e8d5d3 0%, #d4b8b5 40%, #c9a9a6 100%);
-      border-radius: 4px;
-      box-shadow: 
-        0 25px 50px -12px rgba(0,0,0,0.5),
-        inset 0 1px 0 rgba(255,255,255,0.3);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      backface-visibility: hidden;
-    }
+        .line-active {
+            animation: lineJitter 1.8s infinite linear;
+        }
 
-    .card-front::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M60 20c-8 15-25 25-25 40 0 15 12 25 25 25s25-10 25-25c0-15-17-25-25-40z' fill='none' stroke='%23b89a97' stroke-width='1.2' opacity='0.35'/%3E%3Cpath d='M60 30c-6 12-18 18-18 30 0 12 9 18 18 18s18-6 18-18c0-12-12-18-18-30z' fill='none' stroke='%23b89a97' stroke-width='0.8' opacity='0.25'/%3E%3C/svg%3E");
-      background-size: 110px 110px;
-      opacity: 0.7;
-      pointer-events: none;
-    }
+        /* Film Flicker */
+        @keyframes filmFlicker {
+            0% { opacity: 0.96; }
+            25% { opacity: 1; }
+            50% { opacity: 0.92; }
+            75% { opacity: 0.98; }
+            100% { opacity: 0.94; }
+        }
 
-    .card-front::after {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(
-        125deg,
-        transparent 30%,
-        rgba(255,255,255,0.15) 45%,
-        rgba(255,255,255,0.05) 50%,
-        transparent 70%
-      );
-      animation: sheen 8s ease-in-out infinite;
-      pointer-events: none;
-    }
+        .film-flicker {
+            animation: filmFlicker 0.12s infinite;
+        }
 
-    @keyframes sheen {
-      0%, 100% { transform: translateX(-30%) translateY(-30%) rotate(0deg); }
-      50% { transform: translateX(30%) translateY(30%) rotate(5deg); }
-    }
+        /* Godard Dust Spots */
+        .dust-spot {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 41;
+            opacity: 0;
+        }
 
-    .wax-seal {
-      width: 92px;
-      height: 92px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 30%, #a84a4a, #6b2a2a 70%, #4a1c1c);
-      box-shadow: 
-        0 8px 20px rgba(0,0,0,0.4),
-        inset 0 2px 4px rgba(255,255,255,0.15),
-        inset 0 -3px 6px rgba(0,0,0,0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      z-index: 5;
-      transition: transform 0.4s ease, box-shadow 0.4s;
-    }
+        /* Dynamic Film Gate Aspect Ratio Transitions */
+        .aspect-frame {
+            transition: all 1.2s cubic-bezier(0.77, 0, 0.175, 1);
+            position: relative;
+            box-shadow: 0 0 50px rgba(0,0,0,0.9);
+            overflow: hidden;
+        }
 
-    .wax-seal:hover {
-      transform: scale(1.06);
-      box-shadow: 
-        0 12px 28px rgba(0,0,0,0.5),
-        inset 0 2px 4px rgba(255,255,255,0.2);
-    }
+        .ratio-1-1 { width: 85vh; height: 85vh; max-width: 90vw; max-height: 90vw; }
+        .ratio-4-3 { width: 100vh; height: 75vh; max-width: 92vw; }
+        .ratio-16-9 { width: 92vw; height: 51.75vw; max-height: 80vh; }
+        .ratio-239 { width: 96vw; height: 40.1vw; max-height: 75vh; }
 
-    .wax-seal .monogram {
-      font-family: 'Playfair Display', serif;
-      font-size: 32px;
-      font-weight: 600;
-      color: #f0d8a8;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.4);
-      letter-spacing: 1px;
-    }
+        /* Countdown Wheel Rotation */
+        @keyframes sweepRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
 
-    .wax-seal .ring {
-      position: absolute;
-      inset: 6px;
-      border: 1.5px solid rgba(240, 216, 168, 0.35);
-      border-radius: 50%;
-    }
+        .sweep-line {
+            transform-origin: center center;
+            animation: sweepRotate 1s linear infinite;
+        }
 
-    .ribbon {
-      position: absolute;
-      bottom: 28%;
-      width: 160px;
-      height: 40px;
-      z-index: 4;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #09090b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 2px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #dc2626;
+        }
 
-    .ribbon-bow {
-      position: relative;
-      width: 70px;
-      height: 36px;
-    }
+        /* Retro Glow */
+        .gold-glow {
+            text-shadow: 0 0 15px rgba(234, 179, 8, 0.4), 0 0 30px rgba(234, 179, 8, 0.2);
+        }
+        .crimson-glow {
+            text-shadow: 0 0 15px rgba(220, 38, 38, 0.5);
+        }
 
-    .ribbon-bow::before,
-    .ribbon-bow::after {
-      content: '';
-      position: absolute;
-      width: 38px;
-      height: 28px;
-      background: linear-gradient(135deg, #c9a9a6, #a67c7a);
-      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-      top: 0;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.25);
-    }
-
-    .ribbon-bow::before { left: 0; transform: rotate(-25deg); }
-    .ribbon-bow::after { right: 0; transform: rotate(25deg); }
-
-    .ribbon-knot {
-      position: absolute;
-      width: 22px;
-      height: 18px;
-      background: linear-gradient(160deg, #b8928f, #8f6866);
-      border-radius: 4px;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 2;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    }
-
-    .ribbon-tails {
-      position: absolute;
-      width: 100%;
-      height: 50px;
-      top: 22px;
-      left: 0;
-    }
-
-    .ribbon-tails span {
-      position: absolute;
-      width: 28px;
-      height: 45px;
-      background: linear-gradient(180deg, #c9a9a6, #a67c7a);
-      clip-path: polygon(0 0, 100% 0, 85% 100%, 15% 100%);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
-
-    .ribbon-tails span:first-child {
-      left: 18px;
-      transform: rotate(-12deg);
-    }
-
-    .ribbon-tails span:last-child {
-      right: 18px;
-      transform: rotate(12deg);
-    }
-
-    .hint-text {
-      position: absolute;
-      bottom: 12%;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 15px;
-      letter-spacing: 3px;
-      color: var(--soft-ink);
-      opacity: 0.7;
-      text-transform: uppercase;
-      animation: pulse 2.5s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 0.5; }
-      50% { opacity: 0.9; }
-    }
-
-    #opening.opening .invitation-card {
-      transform: rotateX(-12deg) scale(0.96);
-    }
-
-    #opening.opening .wax-seal {
-      transform: scale(0.3) translateY(-80px);
-      opacity: 0;
-      transition: all 0.9s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    #opening.opening .ribbon {
-      transform: scale(1.4) translateY(40px);
-      opacity: 0;
-      transition: all 0.8s ease 0.15s;
-    }
-
-    #opening.opening .card-front {
-      transform: scale(1.05);
-      filter: brightness(1.1);
-      transition: all 1s ease;
-    }
-
-    /* ========== MAIN CONTENT ========== */
-    #main {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 1.1s ease 0.3s, visibility 1.1s;
-      background: 
-        radial-gradient(ellipse at 50% 0%, #3a2a28 0%, transparent 55%),
-        linear-gradient(180deg, #1f1817 0%, #151110 100%);
-      overflow-y: auto;
-      overflow-x: hidden;
-    }
-
-    #main.visible {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .header {
-      padding: 48px 24px 20px;
-      text-align: center;
-    }
-
-    .header h1 {
-      font-family: 'Playfair Display', serif;
-      font-weight: 500;
-      font-size: clamp(1.6rem, 5vw, 2.4rem);
-      letter-spacing: 6px;
-      color: var(--cream);
-      text-transform: uppercase;
-    }
-
-    .header .subtitle {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 14px;
-      letter-spacing: 4px;
-      color: var(--mauve);
-      margin-top: 8px;
-      opacity: 0.8;
-    }
-
-    .timers {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 36px;
-      padding: 20px 24px 40px;
-    }
-
-    .timer-block {
-      text-align: center;
-      width: min(360px, 92vw);
-    }
-
-    .timer-label {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 13px;
-      letter-spacing: 3.5px;
-      text-transform: uppercase;
-      color: var(--mauve);
-      margin-bottom: 14px;
-      opacity: 0.9;
-    }
-
-    .timer-display {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .time-unit {
-      background: linear-gradient(145deg, rgba(201,169,166,0.12), rgba(166,124,122,0.08));
-      border: 1px solid rgba(201,169,166,0.18);
-      border-radius: 12px;
-      padding: 14px 10px;
-      min-width: 68px;
-      backdrop-filter: blur(8px);
-    }
-
-    .time-unit .num {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.85rem;
-      font-weight: 500;
-      color: var(--cream);
-      line-height: 1.1;
-    }
-
-    .time-unit .unit {
-      font-size: 10px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--mauve);
-      margin-top: 4px;
-      opacity: 0.75;
-    }
-
-    .lived-extra {
-      margin-top: 10px;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 15px;
-      color: var(--soft-ink);
-      letter-spacing: 1px;
-    }
-
-    .player-section {
-      padding: 0 24px 40px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .player-label {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 13px;
-      letter-spacing: 2px;
-      color: var(--mauve);
-      opacity: 0.85;
-    }
-
-    .player {
-      width: min(340px, 90vw);
-      background: linear-gradient(145deg, rgba(201,169,166,0.1), rgba(40,30,28,0.6));
-      border: 1px solid rgba(201,169,166,0.15);
-      border-radius: 20px;
-      padding: 18px 20px;
-      backdrop-filter: blur(12px);
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .play-btn {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      border: none;
-      background: linear-gradient(145deg, var(--mauve), var(--mauve-deep));
-      color: #1a1413;
-      font-size: 18px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 4px 12px rgba(166,124,122,0.35);
-    }
-
-    .play-btn:hover {
-      transform: scale(1.06);
-    }
-
-    .play-btn:active {
-      transform: scale(0.96);
-    }
-
-    .track-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .track-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 15px;
-      color: var(--cream);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .track-artist {
-      font-size: 12px;
-      color: var(--mauve);
-      margin-top: 2px;
-      opacity: 0.8;
-    }
-
-    .progress-wrap {
-      margin-top: 8px;
-      height: 3px;
-      background: rgba(201,169,166,0.2);
-      border-radius: 2px;
-      overflow: hidden;
-      cursor: pointer;
-    }
-
-    .progress-bar {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--mauve), var(--gold));
-      border-radius: 2px;
-      transition: width 0.1s linear;
-    }
-
-    .divider {
-      width: 40px;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--mauve), transparent);
-      margin: 0 auto 8px;
-      opacity: 0.5;
-    }
-
-    @media (max-height: 700px) {
-      .header { padding-top: 32px; }
-      .timers { gap: 24px; padding-bottom: 24px; }
-      .time-unit { min-width: 58px; padding: 10px 8px; }
-      .time-unit .num { font-size: 1.5rem; }
-    }
-  </style>
+        /* Sprocket holes styling */
+        .sprocket-strip {
+            background-image: repeating-linear-gradient(
+                to bottom,
+                transparent,
+                transparent 15px,
+                #000 15px,
+                #000 25px
+            );
+        }
+    </style>
 </head>
-<body>
-  <!-- OPENING EXPERIENCE -->
-  <div id="opening">
-    <div class="card-wrapper" id="cardTrigger">
-      <div class="invitation-card">
-        <div class="card-front">
-          <div class="wax-seal">
-            <div class="ring"></div>
-            <span class="monogram">K</span>
-          </div>
-          <div class="ribbon">
-            <div class="ribbon-bow">
-              <div class="ribbon-knot"></div>
-              <div class="ribbon-tails">
-                <span></span>
-                <span></span>
-              </div>
+<body class="bg-zinc-950 text-zinc-100 min-h-screen font-syne overflow-x-hidden selection:bg-red-900 selection:text-white">
+
+    <!-- Film FX Canvas Overlay (Scratches, dust, noise lines) -->
+    <div class="fixed inset-0 pointer-events-none z-50 overflow-hidden">
+        <div class="grain-overlay"></div>
+        <div class="scratch-line line-active" style="animation-delay: 0.1s;"></div>
+        <div class="scratch-line scratch-black line-active" style="animation-delay: 0.7s;"></div>
+        <div class="scratch-line line-active" style="animation-delay: 1.3s;"></div>
+        <!-- Dust particles generated dynamically -->
+        <div id="dustContainer"></div>
+    </div>
+
+    <!-- Main Canvas Viewport for Film & Space -->
+    <main class="relative w-screen h-screen flex flex-col items-center justify-center overflow-hidden bg-black">
+
+        <!-- ========================================== -->
+        <!-- SCREEN 1: CANNES INTRO / GODARD OPENING     -->
+        <!-- ========================================== -->
+        <section id="cannesScreen" class="absolute inset-0 w-full h-full flex items-center justify-center bg-black z-30 transition-opacity duration-1000">
+
+            <!-- Dynamic Aspect Ratio Viewport -->
+            <div id="filmViewport" class="aspect-frame ratio-4-3 bg-zinc-950 border border-zinc-800 flex items-center justify-center relative film-flicker">
+                
+                <!-- Vintage Film Vignette & Shadow -->
+                <div class="absolute inset-0 pointer-events-none shadow-[inset_0_0_100px_rgba(0,0,0,0.95)] z-20"></div>
+
+                <!-- Sprocket Hole Strips (Left & Right margins for 35mm feel) -->
+                <div class="absolute left-1 top-0 bottom-0 w-4 flex flex-col justify-between py-2 z-20 opacity-30">
+                    <div class="w-3 h-4 bg-zinc-700 rounded-sm my-1"></div>
+                    <div class="w-3 h-4 bg-zinc-700 rounded-sm my-1"></div>
+                    <div class="w-3 h-4 bg-zinc-700 rounded-sm my-1"></div>
+                    <div class="w-3 h-4 bg-zinc-700 rounded-sm my-1"></div>
+                    <div class="w-3 h-4 bg-zinc-700 rounded-sm my-1"></div>
+                    <div class="w-3 h-4 bg-zinc-700 rounded-sm my-1"></div>
+                </div>
+                <div class="absolute right-1 top-0 bottom-0 w-4 flex flex-col justify-between py-2 z-20 opacity-30">
+                    <div class="w-3 h-4 bg-zinc-700 rounded-sm my-1"></div>
+                    <div class="w-3 h-4 bg-zinc-700 rounded-sm my-1"></div>
+                    <div class="w-3 h-4 bg-zinc-700 rounded-sm my-1"></div>
+                    <div class="w-3 h-4 bg-zinc-700 rounded-sm my-1"></div>
+                    <div class="w-3 h-4 bg-zinc-700 rounded-sm my-1"></div>
+                    <div class="w-3 h-4 bg-zinc-700 rounded-sm my-1"></div>
+                </div>
+
+                <!-- STAGE 0: Audio Enable & Start Prompt -->
+                <div id="startPrompt" class="flex flex-col items-center justify-center z-30 p-6 text-center space-y-6">
+                    <div class="w-20 h-20 rounded-full border border-amber-500/40 flex items-center justify-center animate-pulse">
+                        <i class="fa-solid fa-film text-3xl text-amber-500"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-cinzel text-xl md:text-2xl tracking-widest text-amber-200">FESTIVAL DE CANNES</h2>
+                        <p class="font-mono-code text-xs text-zinc-400 mt-2 uppercase tracking-widest">Palme d'Or Winner Selection</p>
+                    </div>
+                    <button onclick="startCannesExperience()" class="px-8 py-3 bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-black font-semibold font-cinzel tracking-widest text-sm rounded shadow-lg shadow-amber-900/40 transform hover:scale-105 transition-all">
+                        <i class="fa-solid fa-play mr-2"></i> INITIALIZE PROJECTION
+                    </button>
+                    <span class="text-[10px] font-mono-code text-zinc-500">Clicking enables vintage optical projector sound & interactive score</span>
+                </div>
+
+                <!-- STAGE 1: Cannes Official Selection Bump -->
+                <div id="cannesCard" class="hidden flex-col items-center justify-center text-center z-30 p-8 space-y-4 transform transition-all duration-700">
+                    <!-- Cannes Palm Leaf Vector Graphic -->
+                    <div class="w-28 h-28 md:w-36 md:h-36 mb-2 text-amber-400 drop-shadow-[0_0_15px_rgba(251,191,36,0.5)]">
+                        <svg viewBox="0 0 100 100" fill="currentColor" class="w-full h-full">
+                            <!-- Artistic Palme d'Or Leaf Shape -->
+                            <path d="M50 90 C 50 70, 48 40, 50 10 C 52 40, 50 70, 50 90 Z"/>
+                            <!-- Left Leaves -->
+                            <path d="M49 75 C 35 65, 20 62, 12 66 C 25 58, 40 60, 49 70 Z"/>
+                            <path d="M49 60 C 30 48, 15 46, 8 52 C 22 42, 38 46, 49 55 Z"/>
+                            <path d="M49 45 C 28 32, 12 30, 6 36 C 18 26, 36 30, 49 40 Z"/>
+                            <path d="M49 30 C 32 18, 18 16, 10 22 C 22 14, 38 18, 49 26 Z"/>
+                            <!-- Right Leaves -->
+                            <path d="M51 75 C 65 65, 80 62, 88 66 C 75 58, 60 60, 51 70 Z"/>
+                            <path d="M51 60 C 70 48, 85 46, 92 52 C 78 42, 62 46, 51 55 Z"/>
+                            <path d="M51 45 C 72 32, 88 30, 94 36 C 82 26, 64 30, 51 40 Z"/>
+                            <path d="M51 30 C 68 18, 82 16, 90 22 C 78 14, 62 18, 51 26 Z"/>
+                        </svg>
+                    </div>
+                    <div class="border-t border-b border-amber-500/50 py-2 px-6">
+                        <h1 class="font-cinzel text-xl md:text-3xl font-bold tracking-[0.3em] text-amber-300 gold-glow uppercase">FESTIVAL DE CANNES</h1>
+                        <p class="font-cinzel text-xs md:text-sm tracking-[0.4em] text-amber-200/80 mt-1 uppercase">PALME D'OR BEST FILM</p>
+                    </div>
+                    <p class="font-mono-code text-[11px] text-zinc-400 tracking-widest uppercase">OFFICIAL SELECTION • GRAND PRIX 2026</p>
+                </div>
+
+                <!-- STAGE 2: Godard Classic Title Card -->
+                <div id="godardTitleCard" class="hidden flex-col items-center justify-center text-center z-30 p-6 space-y-4">
+                    <div class="bg-red-600 text-white font-black px-4 py-1 text-xs tracking-widest font-mono-code uppercase mb-2">
+                        UN FILM DE NOUVELLE VAGUE
+                    </div>
+                    <h1 class="font-playfair text-3xl md:text-5xl lg:text-6xl font-black italic text-white tracking-wide leading-tight max-w-2xl px-4 crimson-glow">
+                        Rose, nightingale, dawn and sunset
+                    </h1>
+                    <div class="w-16 h-1 bg-red-600 my-4"></div>
+                    <p class="font-mono-code text-xs text-zinc-300 uppercase tracking-widest">35MM EASTMANCOLOR / SOUND OPTICAL</p>
+                </div>
+
+                <!-- STAGE 3: Director Title Card -->
+                <div id="directorCard" class="hidden flex-col items-center justify-center text-center z-30 p-6 space-y-3">
+                    <span class="font-cinzel text-xs text-amber-400 tracking-[0.5em] uppercase">DIRECTED & CONCEPTUALIZED BY</span>
+                    <h2 class="font-cinzel text-3xl md:text-5xl font-bold text-white tracking-[0.2em] uppercase gold-glow">
+                        KINSLEY KONG
+                    </h2>
+                    <p class="font-mono-code text-[10px] text-zinc-400 tracking-widest uppercase mt-4">CINEMATOGRAPHY • EDITING • SOUND DESIGN</p>
+                </div>
+
+                <!-- STAGE 4: SMPTE Universal Film Countdown Leader -->
+                <div id="countdownLeader" class="hidden flex-col items-center justify-center z-30 relative w-full h-full">
+                    <!-- Target Crosshairs -->
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <div class="w-full h-[1px] bg-zinc-600/60"></div>
+                        <div class="h-full w-[1px] bg-zinc-600/60 absolute"></div>
+                        <div class="w-64 h-64 md:w-80 md:h-80 rounded-full border border-zinc-500/60 absolute"></div>
+                        <div class="w-48 h-48 md:w-60 md:h-60 rounded-full border border-zinc-500/60 absolute"></div>
+                    </div>
+                    <!-- Rotating Sweep Line -->
+                    <div class="w-64 h-64 md:w-80 md:h-80 relative flex items-center justify-center">
+                        <svg class="w-full h-full absolute inset-0 sweep-line" viewBox="0 0 100 100">
+                            <line x1="50" y1="50" x2="50" y2="0" stroke="rgba(255, 255, 255, 0.4)" stroke-width="2"/>
+                            <path d="M 50 50 L 50 0 A 50 50 0 0 1 100 50 Z" fill="rgba(255,255,255,0.08)"/>
+                        </svg>
+                        <span id="countdownNumber" class="font-mono-code font-bold text-6xl md:text-8xl text-zinc-100 z-10">5</span>
+                    </div>
+                    <div class="absolute bottom-6 font-mono-code text-[10px] text-zinc-400 tracking-widest uppercase">
+                        TRANSITION TO MAIN FRAMEWORK • SOUND SYNC MARK 35mm
+                    </div>
+                </div>
+
+                <!-- STAGE 5: Final Transition Banner "KINSLEY'S PERSONAL SPACE" -->
+                <div id="personalSpaceCard" class="hidden flex-col items-center justify-center text-center z-30 p-8 space-y-6">
+                    <div class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center">
+                        <i class="fa-solid fa-arrow-right-to-city text-white text-lg"></i>
+                    </div>
+                    <h1 class="font-cinzel text-2xl md:text-4xl font-bold tracking-[0.3em] text-white uppercase">
+                        KINSLEY'S PERSONAL SPACE
+                    </h1>
+                    <p class="font-mono-code text-xs text-zinc-400 tracking-widest">
+                        [ TAP SCREEN TO ENTER INTERACTIVE PORTAL ]
+                    </p>
+                    <button onclick="enterPersonalSpace()" class="mt-4 px-6 py-2.5 bg-white text-black font-mono-code text-xs uppercase tracking-widest hover:bg-zinc-200 transition-all rounded">
+                        ENTER PORTAL <i class="fa-solid fa-chevron-right ml-2"></i>
+                    </button>
+                </div>
+
             </div>
-          </div>
-          <div class="hint-text">Pull the ribbon</div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- SCREEN 2: MAIN PERSONAL SPACE PORTAL      -->
+        <!-- ========================================== -->
+        <section id="mainPortal" class="hidden absolute inset-0 w-full h-full flex flex-col justify-between p-4 md:p-8 z-20 overflow-y-auto bg-zinc-950/90 backdrop-blur-md">
+            
+            <!-- Top Navigation / Header Bar -->
+            <header class="w-full flex items-center justify-between border-b border-zinc-800 pb-4">
+                <div class="flex items-center space-x-3">
+                    <span class="w-2.5 h-2.5 bg-red-600 rounded-full animate-ping"></span>
+                    <span class="font-cinzel font-bold text-sm md:text-base tracking-widest text-zinc-200">KINSLEY KONG</span>
+                    <span class="text-zinc-600">|</span>
+                    <span class="font-mono-code text-xs text-zinc-400 hidden sm:inline">ARCHIVE & TIMELINE</span>
+                </div>
+
+                <!-- Action Controls -->
+                <div class="flex items-center space-x-3">
+                    <button onclick="replayIntro()" class="px-3 py-1.5 border border-zinc-700 hover:border-zinc-500 rounded font-mono-code text-xs text-zinc-300 hover:text-white transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-rotate-left"></i> <span class="hidden sm:inline">REPLAY CANNES INTRO</span>
+                    </button>
+                    <button id="soundToggleBtn" onclick="toggleAudio()" class="w-9 h-9 border border-zinc-700 hover:border-zinc-500 rounded flex items-center justify-center text-zinc-300 hover:text-white transition-all">
+                        <i class="fa-solid fa-volume-high" id="soundIcon"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Center Content Area: Dual Live Countdowns -->
+            <div class="flex-1 flex flex-col items-center justify-center my-6 space-y-8 max-w-4xl mx-auto w-full">
+                
+                <!-- Film Title Subtle Banner -->
+                <div class="text-center">
+                    <span class="font-mono-code text-[11px] text-red-500 uppercase tracking-widest">PALME D'OR SELECTION</span>
+                    <h2 class="font-playfair text-xl md:text-3xl italic font-bold text-zinc-200 mt-1">"Rose, nightingale, dawn and sunset"</h2>
+                    <p class="font-mono-code text-xs text-zinc-500 mt-1">BASE DATE OF EXISTENCE: DECEMBER 22, 2002</p>
+                </div>
+
+                <!-- COUNTDOWN 1: Next Birthday Countdown (Top) -->
+                <div class="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl p-5 md:p-7 relative overflow-hidden shadow-2xl group hover:border-zinc-700 transition-all">
+                    <div class="absolute top-0 right-0 px-3 py-1 bg-amber-500/10 border-l border-b border-amber-500/20 rounded-bl text-[10px] font-mono-code text-amber-400">
+                        TIMECODE // COUNTDOWN
+                    </div>
+                    <div class="flex items-center space-x-3 mb-3">
+                        <i class="fa-solid fa-cake-candles text-amber-400 text-sm"></i>
+                        <h3 class="font-cinzel text-xs md:text-sm font-semibold tracking-widest text-zinc-300 uppercase">NEXT BIRTHDAY COUNTDOWN</h3>
+                    </div>
+                    <!-- Flip Counter / Digit Grid -->
+                    <div class="grid grid-cols-4 gap-2 md:gap-4 text-center mt-2">
+                        <div class="bg-black/60 border border-zinc-800 rounded-lg p-2 md:p-4">
+                            <span id="bdayDays" class="font-mono-code text-2xl md:text-5xl font-bold text-amber-400 block">00</span>
+                            <span class="font-mono-code text-[10px] text-zinc-500 uppercase mt-1 block">DAYS</span>
+                        </div>
+                        <div class="bg-black/60 border border-zinc-800 rounded-lg p-2 md:p-4">
+                            <span id="bdayHours" class="font-mono-code text-2xl md:text-5xl font-bold text-amber-400 block">00</span>
+                            <span class="font-mono-code text-[10px] text-zinc-500 uppercase mt-1 block">HOURS</span>
+                        </div>
+                        <div class="bg-black/60 border border-zinc-800 rounded-lg p-2 md:p-4">
+                            <span id="bdayMins" class="font-mono-code text-2xl md:text-5xl font-bold text-amber-400 block">00</span>
+                            <span class="font-mono-code text-[10px] text-zinc-500 uppercase mt-1 block">MINUTES</span>
+                        </div>
+                        <div class="bg-black/60 border border-zinc-800 rounded-lg p-2 md:p-4">
+                            <span id="bdaySecs" class="font-mono-code text-2xl md:text-5xl font-bold text-amber-400 block">00</span>
+                            <span class="font-mono-code text-[10px] text-zinc-500 uppercase mt-1 block">SECONDS</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COUNTDOWN 2: Duration of Life Timecode (Bottom) -->
+                <div class="w-full bg-zinc-900/80 border border-zinc-800 rounded-xl p-5 md:p-7 relative overflow-hidden shadow-2xl group hover:border-zinc-700 transition-all">
+                    <div class="absolute top-0 right-0 px-3 py-1 bg-red-500/10 border-l border-b border-red-500/20 rounded-bl text-[10px] font-mono-code text-red-400">
+                        TIMECODE // ELAPSED
+                    </div>
+                    <div class="flex items-center space-x-3 mb-3">
+                        <i class="fa-solid fa-hourglass-half text-red-400 text-sm"></i>
+                        <h3 class="font-cinzel text-xs md:text-sm font-semibold tracking-widest text-zinc-300 uppercase">TIME ELAPSED SINCE BIRTH (DEC 22, 2002)</h3>
+                    </div>
+                    <!-- Elapsed Time Grid -->
+                    <div class="grid grid-cols-5 gap-1.5 md:gap-3 text-center mt-2">
+                        <div class="bg-black/60 border border-zinc-800 rounded-lg p-2 md:p-3">
+                            <span id="lifeYears" class="font-mono-code text-xl md:text-4xl font-bold text-zinc-100 block">00</span>
+                            <span class="font-mono-code text-[9px] md:text-[10px] text-zinc-500 uppercase mt-1 block">YEARS</span>
+                        </div>
+                        <div class="bg-black/60 border border-zinc-800 rounded-lg p-2 md:p-3">
+                            <span id="lifeDays" class="font-mono-code text-xl md:text-4xl font-bold text-zinc-100 block">000</span>
+                            <span class="font-mono-code text-[9px] md:text-[10px] text-zinc-500 uppercase mt-1 block">DAYS</span>
+                        </div>
+                        <div class="bg-black/60 border border-zinc-800 rounded-lg p-2 md:p-3">
+                            <span id="lifeHours" class="font-mono-code text-xl md:text-4xl font-bold text-zinc-100 block">00</span>
+                            <span class="font-mono-code text-[9px] md:text-[10px] text-zinc-500 uppercase mt-1 block">HOURS</span>
+                        </div>
+                        <div class="bg-black/60 border border-zinc-800 rounded-lg p-2 md:p-3">
+                            <span id="lifeMins" class="font-mono-code text-xl md:text-4xl font-bold text-zinc-100 block">00</span>
+                            <span class="font-mono-code text-[9px] md:text-[10px] text-zinc-500 uppercase mt-1 block">MINS</span>
+                        </div>
+                        <div class="bg-black/60 border border-zinc-800 rounded-lg p-2 md:p-3">
+                            <span id="lifeSecs" class="font-mono-code text-xl md:text-4xl font-bold text-red-500 block">00</span>
+                            <span class="font-mono-code text-[9px] md:text-[10px] text-zinc-500 uppercase mt-1 block">SECS</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Bottom Dock: Integrated Music Player & Playlist Manager -->
+            <footer class="w-full bg-zinc-900/90 border border-zinc-800 rounded-xl p-3 md:p-4 max-w-5xl mx-auto shadow-2xl">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                    
+                    <!-- Song Info & "kinsley'choice" badge -->
+                    <div class="flex items-center space-x-3 w-full md:w-auto">
+                        <div class="w-12 h-12 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center flex-shrink-0 relative overflow-hidden group">
+                            <i class="fa-solid fa-compact-disc text-amber-400 text-xl group-hover:rotate-180 transition-transform duration-700"></i>
+                            <div id="playingWave" class="hidden absolute inset-0 bg-red-950/60 items-center justify-center gap-0.5 px-2">
+                                <span class="w-1 h-4 bg-red-500 animate-bounce"></span>
+                                <span class="w-1 h-6 bg-red-500 animate-bounce" style="animation-delay: 0.1s"></span>
+                                <span class="w-1 h-3 bg-red-500 animate-bounce" style="animation-delay: 0.2s"></span>
+                            </div>
+                        </div>
+                        <div class="overflow-hidden">
+                            <div class="flex items-center space-x-2">
+                                <h4 id="trackTitle" class="font-syne font-semibold text-sm text-zinc-100 truncate">Godard's Theme (Synthesized Noir)</h4>
+                                <span class="font-playfair italic text-[11px] text-amber-400/90 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 flex-shrink-0">
+                                    kinsley'choice
+                                </span>
+                            </div>
+                            <p id="trackArtist" class="font-mono-code text-xs text-zinc-400 truncate mt-0.5">Cannes Soundtrack • Original Selection</p>
+                        </div>
+                    </div>
+
+                    <!-- Audio Controls & Progress Bar -->
+                    <div class="flex flex-col items-center w-full md:w-1/2 space-y-2">
+                        <div class="flex items-center space-x-4">
+                            <button onclick="prevTrack()" class="text-zinc-400 hover:text-white text-xs transition-colors"><i class="fa-solid fa-backward-step"></i></button>
+                            <button onclick="togglePlayPause()" id="playPauseBtn" class="w-9 h-9 rounded-full bg-zinc-100 text-black flex items-center justify-center hover:bg-amber-400 transition-colors">
+                                <i class="fa-solid fa-play text-xs ml-0.5" id="playIcon"></i>
+                            </button>
+                            <button onclick="nextTrack()" class="text-zinc-400 hover:text-white text-xs transition-colors"><i class="fa-solid fa-forward-step"></i></button>
+                        </div>
+                        <!-- Timeline Slider -->
+                        <div class="w-full flex items-center space-x-2">
+                            <span id="currentTime" class="font-mono-code text-[10px] text-zinc-500">0:00</span>
+                            <div class="flex-1 h-1 bg-zinc-800 rounded cursor-pointer relative" onclick="seekAudio(event)">
+                                <div id="progressBar" class="h-full bg-amber-400 rounded w-0 relative"></div>
+                            </div>
+                            <span id="durationTime" class="font-mono-code text-[10px] text-zinc-500">2:45</span>
+                        </div>
+                    </div>
+
+                    <!-- Playlist & Custom Audio Upload Button -->
+                    <div class="flex items-center space-x-2 w-full md:w-auto justify-end">
+                        <label class="cursor-pointer px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded font-mono-code text-xs transition-all flex items-center gap-1.5 border border-zinc-700">
+                            <i class="fa-solid fa-plus text-amber-400"></i>
+                            <span>ADD TRACK</span>
+                            <input type="file" id="audioUpload" accept="audio/*" class="hidden" onchange="handleAudioUpload(event)">
+                        </label>
+                        <button onclick="togglePlaylistModal()" class="px-3 py-1.5 border border-zinc-700 hover:border-zinc-500 rounded font-mono-code text-xs text-zinc-300 hover:text-white transition-all">
+                            <i class="fa-solid fa-list-ul"></i>
+                        </button>
+                    </div>
+
+                </div>
+            </footer>
+
+        </section>
+
+    </main>
+
+    <!-- Playlist Modal -->
+    <div id="playlistModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-md p-6 relative">
+            <button onclick="togglePlaylistModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="font-cinzel text-lg font-bold text-zinc-200 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-compact-disc text-amber-400"></i> PLAYLIST ARCHIVE
+            </h3>
+            <div id="playlistContainer" class="space-y-2 max-h-60 overflow-y-auto pr-1">
+                <!-- Tracks dynamically injected here -->
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 
-  <!-- MAIN PERSONAL SPACE -->
-  <div id="main">
-    <header class="header">
-      <h1>Kinsley's Personal Space</h1>
-      <p class="subtitle">a quiet corner of the internet</p>
-    </header>
 
-    <div class="timers">
-      <!-- Next Birthday -->
-      <div class="timer-block">
-        <div class="timer-label">Until Next Birthday</div>
-        <div class="timer-display" id="birthdayTimer">
-          <div class="time-unit"><div class="num" id="b-days">--</div><div class="unit">Days</div></div>
-          <div class="time-unit"><div class="num" id="b-hours">--</div><div class="unit">Hours</div></div>
-          <div class="time-unit"><div class="num" id="b-mins">--</div><div class="unit">Mins</div></div>
-          <div class="time-unit"><div class="num" id="b-secs">--</div><div class="unit">Secs</div></div>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
-      <!-- Time Lived -->
-      <div class="timer-block">
-        <div class="timer-label">Time Already Lived</div>
-        <div class="timer-display" id="livedTimer">
-          <div class="time-unit"><div class="num" id="l-years">--</div><div class="unit">Years</div></div>
-          <div class="time-unit"><div class="num" id="l-days">--</div><div class="unit">Days</div></div>
-          <div class="time-unit"><div class="num" id="l-hours">--</div><div class="unit">Hours</div></div>
-          <div class="time-unit"><div class="num" id="l-mins">--</div><div class="unit">Mins</div></div>
-        </div>
-        <div class="lived-extra" id="livedExtra"></div>
-      </div>
-    </div>
-
-    <!-- Music Player -->
-    <div class="player-section">
-      <div class="player-label">kinsley'choice</div>
-      <div class="player">
-        <button class="play-btn" id="playBtn" aria-label="Play">▶</button>
-        <div class="track-info">
-          <div class="track-title" id="trackTitle">Add your first track</div>
-          <div class="track-artist" id="trackArtist">Your personal playlist</div>
-          <div class="progress-wrap" id="progressWrap">
-            <div class="progress-bar" id="progressBar"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <audio id="audio" preload="metadata"></audio>
-
-  <script>
-    const BIRTH_DATE = new Date(2002, 11, 22); // Dec 22, 2002
-
-    const opening = document.getElementById('opening');
-    const main = document.getElementById('main');
-    const cardTrigger = document.getElementById('cardTrigger');
-
-    let hasOpened = false;
-
-    function openCard() {
-      if (hasOpened) return;
-      hasOpened = true;
-
-      opening.classList.add('opening');
-
-      setTimeout(() => {
-        opening.classList.add('hidden');
-        main.classList.add('visible');
-        updateTimers();
-        setInterval(updateTimers, 1000);
-      }, 1100);
-    }
-
-    cardTrigger.addEventListener('click', openCard);
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') openCard();
-    });
-
-    function pad(n) {
-      return n.toString().padStart(2, '0');
-    }
-
-    function getNextBirthday() {
-      const now = new Date();
-      let next = new Date(now.getFullYear(), 11, 22);
-      if (now > next) {
-        next = new Date(now.getFullYear() + 1, 11, 22);
-      }
-      return next;
-    }
-
-    function updateTimers() {
-      const now = new Date();
-
-      // Next Birthday
-      const nextBday = getNextBirthday();
-      const diffBday = nextBday - now;
-
-      if (diffBday <= 0) {
-        document.getElementById('b-days').textContent = '0';
-        document.getElementById('b-hours').textContent = '0';
-        document.getElementById('b-mins').textContent = '0';
-        document.getElementById('b-secs').textContent = '0';
-      } else {
-        const days = Math.floor(diffBday / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diffBday % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const mins = Math.floor((diffBday % (1000 * 60 * 60)) / (1000 * 60));
-        const secs = Math.floor((diffBday % (1000 * 60)) / 1000);
-
-        document.getElementById('b-days').textContent = days;
-        document.getElementById('b-hours').textContent = pad(hours);
-        document.getElementById('b-mins').textContent = pad(mins);
-        document.getElementById('b-secs').textContent = pad(secs);
-      }
-
-      // Time Lived
-      const livedMs = now - BIRTH_DATE;
-      const livedSec = Math.floor(livedMs / 1000);
-      const livedMin = Math.floor(livedSec / 60);
-      const livedHour = Math.floor(livedMin / 60);
-      const livedDay = Math.floor(livedHour / 24);
-
-      let years = now.getFullYear() - BIRTH_DATE.getFullYear();
-      const m = now.getMonth() - BIRTH_DATE.getMonth();
-      if (m < 0 || (m === 0 && now.getDate() < BIRTH_DATE.getDate())) {
-        years--;
-      }
-
-      const totalDays = Math.floor(livedMs / (1000 * 60 * 60 * 24));
-      const yearsExact = Math.floor(totalDays / 365.25);
-      const daysAfterYears = totalDays - Math.floor(yearsExact * 365.25);
-      const hours = livedHour % 24;
-      const mins = livedMin % 60;
-
-      document.getElementById('l-years').textContent = years;
-      document.getElementById('l-days').textContent = daysAfterYears;
-      document.getElementById('l-hours').textContent = pad(hours);
-      document.getElementById('l-mins').textContent = pad(mins);
-
-      document.getElementById('livedExtra').textContent = 
-        `${totalDays.toLocaleString()} days · ${livedHour.toLocaleString()} hours lived`;
-    }
-
-    // Music Player
-    const playlist = []; // 之后在这里添加歌曲
-
-    const audio = document.getElementById('audio');
-    const playBtn = document.getElementById('playBtn');
-    const trackTitle = document.getElementById('trackTitle');
-    const trackArtist = document.getElementById('trackArtist');
-    const progressBar = document.getElementById('progressBar');
-    const progressWrap = document.getElementById('progressWrap');
-
-    let currentIndex = 0;
-    let isPlaying = false;
-
-    function loadTrack(index) {
-      if (playlist.length === 0) {
-        trackTitle.textContent = "Add your first track";
-        trackArtist.textContent = "Your personal playlist";
-        return;
-      }
-      const track = playlist[index];
-      audio.src = track.src;
-      trackTitle.textContent = track.title;
-      trackArtist.textContent = track.artist;
-    }
-
-    playBtn.addEventListener('click', () => {
-      if (playlist.length === 0) {
-        alert("歌单目前是空的。\n之后你可以在代码里的 playlist 数组中添加歌曲。");
-        return;
-      }
-      if (isPlaying) {
-        audio.pause();
-        playBtn.textContent = '▶';
-      } else {
-        audio.play();
-        playBtn.textContent = '❚❚';
-      }
-      isPlaying = !isPlaying;
-    });
-
-    audio.addEventListener('timeupdate', () => {
-      if (audio.duration) {
-        const pct = (audio.currentTime / audio.duration) * 100;
-        progressBar.style.width = pct + '%';
-      }
-    });
-
-    audio.addEventListener('ended', () => {
-      currentIndex = (currentIndex + 1) % playlist.length;
-      loadTrack(currentIndex);
-      if (isPlaying) audio.play();
-    });
-
-    progressWrap.addEventListener('click', (e) => {
-      if (!audio.duration) return;
-      const rect = progressWrap.getBoundingClientRect();
-      const pct = (e.clientX - rect.left) / rect.width;
-      audio.currentTime = pct * audio.duration;
-    });
-
-    loadTrack(0);
-  </script>
-</body>
-</html>
+    <!-- =================
